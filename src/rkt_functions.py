@@ -1,23 +1,19 @@
 import colorsys
 import os
-import shutil
 import subprocess
 import math as m
 import myfunctions.functions as mf
 import myfunctions.molecule as ml
-import pickle
-import yaml
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
 import math as m
-import copy as cp
-import random as rm
 from reaktoro import *
 from scipy.stats import linregress
 from itertools import chain, combinations
 import multiprocessing as mp
 
+#wrapper to allow parralelisation of functions used in this script. input is a list with the name of the function followed by a list of the inputs 
 def wrapper(lst):
     if lst[0] == "scan_1D_pH": return scan_1D_pH(*lst[1])
     if lst[0] == "scan_1D_Eh": return scan_1D_Eh(*lst[1])
@@ -28,7 +24,7 @@ def wrapper(lst):
     if lst[0] == "scan_2D_xpC_ypC": return scan_2D_xpC_ypC(*lst[1])
     return "missed"
 
-
+#generates a 1D plot of data and casts it to an axis object from matplotlib
 def get_1D_plot(ax,data,xlim,imask,title,xtit,ytit,colors):
     mask=list(imask & data.keys())
     for ii in mask:
@@ -42,6 +38,7 @@ def get_1D_plot(ax,data,xlim,imask,title,xtit,ytit,colors):
     ax.tick_params(axis='both', labelsize=20)
     return ax.get_legend_handles_labels()
 
+#generates a 2D patches plotfor a given set of predominance data and casts it to an axis object.
 def get_2D_plot(ax,data,xlim,ylim,imask,title,xtit,ytit,colors):
     mask=list(imask & data.keys())
     a=[]
@@ -72,7 +69,6 @@ def get_2D_plot(ax,data,xlim,ylim,imask,title,xtit,ytit,colors):
     #ax.tick_params(axis='both',which='both',bottom=False,top=False,left=False,right=False,labelbottom=False,labelleft=False)
     return patches
 
-#function for building our phases
 def get_phases(s_dic):
     aq_spe=[]
     g_spe=[]
